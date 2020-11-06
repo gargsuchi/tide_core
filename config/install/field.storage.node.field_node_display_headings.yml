@@ -2,20 +2,20 @@ langcode: en
 status: true
 dependencies:
   module:
+    - node
     - options
-    - paragraphs
-id: paragraph.field_paragraph_accordion_style
-field_name: field_paragraph_accordion_style
-entity_type: paragraph
+id: node.field_node_display_headings
+field_name: field_node_display_headings
+entity_type: node
 type: list_string
 settings:
   allowed_values:
     -
-      value: basic
-      label: Standard
+      value: showH2
+      label: 'Show H2'
     -
-      value: numbered
-      label: Numbered
+      value: showH2AndH3
+      label: 'Show H2 and H3'
   allowed_values_function: ''
 module: options
 locked: false
