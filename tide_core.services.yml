@@ -3,3 +3,7 @@ services:
     class: Drupal\tide_core\EventSubscriber\TideCoreRouteAlter
     tags:
       - { name: event_subscriber }
+  tide_core.entity_clone_event_subscriber:
+    class: Drupal\tide_core\EventSubscriber\TideCoreEntityClone
+    tags:
+      - { name: event_subscriber }
