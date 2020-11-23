@@ -994,13 +994,13 @@ function tide_core_update_8041() {
 
   $roles = [
     'editor',
-    'site_admin'
+    'site_admin',
   ];
   $permissions = [
     'clone file entity',
     'clone media entity',
     'clone node entity',
-    'clone paragraph entity'
+    'clone paragraph entity',
   ];
 
   foreach ($roles as $role) {

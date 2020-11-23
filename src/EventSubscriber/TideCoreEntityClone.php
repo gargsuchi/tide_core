@@ -14,18 +14,24 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class TideCoreEntityClone implements EventSubscriberInterface {
 
- public static function getSubscribedEvents() {
-   return [
-     EntityCloneEvents::POST_CLONE => 'postCloneUpdate'
-   ];
- }
+  /**
+   * {@inheritDoc}
+   */
+  public static function getSubscribedEvents() {
+    return [
+      EntityCloneEvents::POST_CLONE => 'postCloneUpdate',
+    ];
+  }
 
- public function postCloneUpdate(EntityCloneEvent $event) {
-   $current_user = User::load(\Drupal::currentUser()
-     ->id());
-   $cloned_entity = $event->getClonedEntity();
-   $cloned_entity->setOwner($current_user);
-   $cloned_entity->save();
- }
+  /**
+   * Alter the owner of a cloned entity to the user who triggered the clone.
+   */
+  public function postCloneUpdate(EntityCloneEvent $event) {
+    $current_user = User::load(\Drupal::currentUser()
+      ->id());
+    $cloned_entity = $event->getClonedEntity();
+    $cloned_entity->setOwner($current_user);
+    $cloned_entity->save();
+  }
 
 }
