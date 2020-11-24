@@ -3,7 +3,6 @@
 namespace Drupal\tide_core\EventSubscriber;
 
 use Drupal\entity_clone\Event\EntityCloneEvent;
-use Drupal\entity_clone\Event\EntityCloneEvents;
 use Drupal\user\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -19,7 +18,7 @@ class TideCoreEntityClone implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      EntityCloneEvents::POST_CLONE => 'postCloneUpdate',
+      'entity_clone.post_clone' => 'postCloneUpdate',
     ];
   }
 
