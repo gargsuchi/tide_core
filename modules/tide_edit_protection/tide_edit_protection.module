@@ -1,0 +1,83 @@
+<?php
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function tide_edit_protection_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.tide_edit_protection':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Add alert message to a form.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function tide_edit_protection_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $include = FALSE;
+  $config = \Drupal::config('tide_edit_protection.form');
+
+  // Check entity form conditions.
+  $entity_method = $config->get('entity_method');
+  if (!empty($entity_method)) {
+    $formObject = $form_state->getFormObject();
+    if (method_exists($formObject, 'getEntity')) {
+      $entity = $formObject->getEntity();
+      $entity_type = $entity->getEntityTypeId();
+      $entity_bundle = $entity_type . '__' . $entity->bundle();
+      if ('all' === $entity_method) {
+        $include = TRUE;
+      }
+      elseif ('entity_type' === $entity_method) {
+        $entity_types = $config->get('entity_types');
+        if (in_array($entity_type, $entity_types)) {
+          $include = TRUE;
+        }
+      }
+      elseif ('entity_bundle' === $entity_method) {
+        $entity_bundles = $config->get('entity_bundles');
+        if (in_array($entity_bundle, $entity_bundles)) {
+          $include = TRUE;
+        }
+      }
+    }
+  }
+
+  // Check other forms by form_id, support Regex.
+  if (FALSE === $include) {
+    $alert_form_ids = $config->get('alert_form_ids');
+    if (!empty($alert_form_ids)) {
+      $alert_form_ids = explode("\n", $alert_form_ids);
+      foreach ($alert_form_ids as $alert_form_id) {
+        if (preg_match('/^[a-zA-Z_-]$/', $alert_form_id)) {
+          if ($alert_form_id === $form_id) {
+            $include = TRUE;
+            break;
+          }
+        }
+        else {
+          if (preg_match('/' . $alert_form_id . '/i', $form_id)) {
+            $include = TRUE;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  if (TRUE === $include) {
+    $cleaned_id = Html::getId($form_id);
+    $form['#attached']['library'][] = 'tide_edit_protection/form_edit_protection';
+    $form['#attached']['drupalSettings']['tide_edit_protection']['forms'][$cleaned_id] = $cleaned_id;
+    $form['#attached']['drupalSettings']['tide_edit_protection']['message'] = $config->get('alert_message');
+  }
+}
