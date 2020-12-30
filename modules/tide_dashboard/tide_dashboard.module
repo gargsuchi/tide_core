@@ -1,0 +1,137 @@
+<?php
+
+/**
+ * @file
+ * Tide Dashboard.
+ */
+
+use Drupal\Core\Menu\MenuTreeParameters;
+
+/**
+ * Implements hook_toolbar_alter().
+ *
+ * Replace the Workbench preRender to use Tide Dashboard menu.
+ *
+ * @see workbench_toolbar()
+ */
+function tide_dashboard_toolbar_alter(&$items) {
+  $items['workbench']['tab']['#title'] = t('Dashboard');
+  $items['workbench']['tray']['#heading'] = t('My Dashboard');
+  $items['workbench']['tray']['workbench_toolbar']['#pre_render'] = ['tide_dashboard_prerender_workbench_toolbar_tray'];
+  $items['workbench']['#attached']['library'][] = 'admin_toolbar/toolbar.tree';
+
+  $user = \Drupal::currentUser();
+  if (!$user->hasPermission('access admin menu')) {
+    unset($items['administration']);
+  }
+}
+
+/**
+ * Renders the toolbar's workbench tray.
+ *
+ * This is a clone of WorkbenchToolbar::preRenderTray() function, which uses
+ * setMaxDepth(4) instead of setMaxDepth(1) to render the Tide Dashboard menu.
+ *
+ * @param array $element
+ *   A renderable array.
+ *
+ * @return array
+ *   The updated renderable array.
+ *
+ * @see WorkbenchToolbar::preRenderTray()
+ * @see toolbar_prerender_toolbar_administration_tray()
+ */
+function tide_dashboard_prerender_workbench_toolbar_tray(array $element) : array {
+  $menu_tree = \Drupal::service('toolbar.menu_tree');
+  $parameters = new MenuTreeParameters();
+  $parameters->setMinDepth(1)->setMaxDepth(4);
+  $tree = $menu_tree->load('tide_dashboard', $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ['callable' => 'toolbar_menu_navigation_links'],
+  ];
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $element['administration_menu'] = $menu_tree->build($tree);
+
+  // Reuse the Toolbar + Workbench icons.
+  $menu_item_classes = [
+    'tide_dashboard.dashboard' => 'toolbar-icon-workbench-my-edited',
+    'tide_dashboard.node' => 'toolbar-icon-system-admin-content',
+    'tide_dashboard.media' => 'toolbar-icon-system-admin-content',
+    'tide_dashboard.structure' => 'toolbar-icon-system-admin-structure',
+    'tide_dashboard.configuration' => 'toolbar-icon-system-admin-config',
+    'tide_dashboard.people' => 'toolbar-icon-entity-user-collection',
+  ];
+  foreach ($menu_item_classes as $menu_item => $class) {
+    if (!isset($element['administration_menu']['#items'][$menu_item]['url'])) {
+      continue;
+    }
+    /** @var \Drupal\Core\Url $url */
+    $url = $element['administration_menu']['#items'][$menu_item]['url'];
+    $attributes = $url->getOption('attributes');
+    $attributes['class'][] = $class;
+    $url->setOption('attributes', $attributes);
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_menu_links_discovered_alter().
+ *
+ * Adds node types and media types to the Dashboard menu.
+ *
+ * @see admin_toolbar_tools_menu_links_discovered_alter()
+ */
+function tide_dashboard_menu_links_discovered_alter(&$links) {
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  // Add menu item for each content type.
+  foreach ($entity_type_manager->getStorage('node_type')->loadMultiple() as $type) {
+    $links['tide_dashboard.node.add.' . $type->id()] = [
+      'title' => $type->label(),
+      'provider' => 'tide_dashboard',
+      'route_name' => 'node.add',
+      'parent' => 'tide_dashboard.node.add',
+      'route_parameters' => ['node_type' => $type->id()],
+    ];
+  }
+
+  // Add menu item for each media type.
+  foreach ($entity_type_manager->getStorage('media_type')->loadMultiple() as $type) {
+    $links['tide_dashboard.media.add.' . $type->id()] = [
+      'title' => $type->label(),
+      'provider' => 'tide_dashboard',
+      'route_name' => 'entity.media.add_form',
+      'parent' => 'tide_dashboard.media.add',
+      'route_parameters' => ['media_type' => $type->id()],
+    ];
+  }
+
+  // Add menu item to Files.
+  if (_tide_dashboard_route_exists('view.files.page_1')) {
+    $links['tide_dashboard.media.files'] = [
+      'title' => t('Files'),
+      'provider' => 'tide_dashboard',
+      'route_name' => 'view.files.page_1',
+      'menu_name' => 'tide_dashboard',
+      'parent' => 'tide_dashboard.media',
+      'weight' => -40,
+    ];
+  }
+}
+
+/**
+ * Determine if a route exists by name.
+ *
+ * @param string $route_name
+ *   The name of the route to check.
+ *
+ * @return bool
+ *   Whether a route with that route name exists.
+ */
+function _tide_dashboard_route_exists(string $route_name) : bool {
+  $route_provider = \Drupal::service('router.route_provider');
+  return (count($route_provider->getRoutesByNames([$route_name])) === 1);
+}

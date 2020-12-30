@@ -1,0 +1,4 @@
+access admin menu:
+  title: 'Access Admin menu'
+  description: 'Access the Admin (Manage) menu.'
+  restrict access: FALSE
