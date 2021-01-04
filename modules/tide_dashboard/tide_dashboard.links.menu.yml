@@ -6,7 +6,7 @@ tide_dashboard.admin:
   weight: 0
 
 tide_dashboard.dashboard:
-  title: 'My Dashboard'
+  title: 'Dashboard'
   route_name: workbench.content
   menu_name: tide_dashboard
   weight: -50
@@ -67,6 +67,6 @@ tide_dashboard.configuration:
 
 tide_dashboard.people:
   title: 'People'
-  route_name: user.admin_index
+  route_name: entity.user.collection
   weight: 0
   menu_name: tide_dashboard
