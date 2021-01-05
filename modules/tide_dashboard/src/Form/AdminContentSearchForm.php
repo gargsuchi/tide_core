@@ -51,7 +51,6 @@ class AdminContentSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // Set up the form to submit using GET to the correct search page.
     $form['search'] = [
       '#type' => 'fieldset',
       '#open' => TRUE,
@@ -74,22 +73,24 @@ class AdminContentSearchForm extends FormBase {
       ],
     ];
 
+    // Get the list of content types, sorted by label.
     $content_types = [];
     foreach ($this->entityTypeManager->getStorage('node_type')->loadMultiple() as $type) {
       $content_types[$type->id()] = $type->label();
     }
     asort($content_types);
-    $content_types = ['All' => $this->t('- Any content type -')] + $content_types;
+    $content_types = ['_' => $this->t('- Any content type -')] + $content_types;
     $form['search']['type'] = [
       '#type' => 'select',
       '#title' => $this->t('Content type'),
       '#title_display' => 'invisible',
       '#field_prefix' => $this->t('in'),
       '#options' => $content_types,
-      '#default_value' => ['All'],
+      '#default_value' => '_',
     ];
 
-    $sites = ['All' => $this->t('- Any site -')];
+    // Get the list of Sites in hierarchy.
+    $sites = ['_' => $this->t('- Any site -')];
     /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
     $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     $tree = $term_storage->loadTree('sites', 0, NULL, TRUE);
@@ -100,15 +101,13 @@ class AdminContentSearchForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Site'),
       '#title_display' => 'invisible',
-      '#default_value' => ['All'],
+      '#default_value' => '_',
       '#options' => $sites,
     ];
 
     $form['search']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Search'),
-      // Prevent op from showing up in the query string.
-      '#name' => '',
       '#attributes' => [
         'class' => ['form-item'],
       ],
@@ -122,13 +121,21 @@ class AdminContentSearchForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $route = 'system.admin_content';
-    $options = [
-      'query' => [
-        'title' => $form_state->getValue('title'),
-        'type' => $form_state->getValue('type'),
-        'field_node_site_target_id' => [$form_state->getValue('field_node_site_target_id')],
-      ],
-    ];
+    $options = [];
+
+    $title = $form_state->getValue('title');
+    if ($title) {
+      $options['query']['title'] = $title;
+    }
+    $type = $form_state->getValue('type');
+    if ($type && $type !== '_') {
+      $options['query']['type'] = $type;
+    }
+    $site = $form_state->getValue('field_node_site_target_id');
+    if ($site && $site !== '_') {
+      $options['query']['field_node_site_target_id'] = [$site];
+    }
+
     $form_state->setRedirect($route, [], $options);
   }
 
