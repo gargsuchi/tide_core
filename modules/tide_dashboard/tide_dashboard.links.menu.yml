@@ -17,7 +17,7 @@ tide_dashboard.dashboard.configure:
   parent: tide_dashboard.dashboard
   weight: -50
 tide_dashboard.dashboard.logout:
-  title: 'Logout'
+  title: 'Log out'
   route_name: user.logout
   menu_name: tide_dashboard
   parent: tide_dashboard.dashboard
