@@ -14,11 +14,10 @@ function tide_dashboard_install($is_syncing) {
   $role_permissions = [
     'editor' => ['access workbench'],
     'approver' => ['access workbench'],
-    'site_admin' => [
-      'access admin menu',
-      'access workbench',
-    ],
+    'site_admin' => ['access workbench'],
   ];
+
+  $login_redirect_config = \Drupal::configFactory()->getEditable('login_redirect_per_role.settings');
 
   foreach ($role_permissions as $role_id => $permissions) {
     /** @var \Drupal\user\RoleInterface $role */
@@ -28,12 +27,17 @@ function tide_dashboard_install($is_syncing) {
         $role->grantPermission($permission);
       }
       $role->save();
+
+      $login_redirect_config['login'][$role_id]['redirect_url'] = '/admin/workbench';
+      $login_redirect_config['login'][$role_id]['allow_destination'] = FALSE;
     }
   }
 
-  $config = \Drupal::configFactory()->getEditable('workbench.settings');
-  $config->set('overview_left', 'tide_dashboard_current_user:empty');
-  $config->set('overview_right', 'tide_dashboard_current_user:empty');
-  $config->set('overview_main', 'tide_dashboard_my_content:overview');
-  $config->save();
+  $login_redirect_config->save();
+
+  $workbench_config = \Drupal::configFactory()->getEditable('workbench.settings');
+  $workbench_config->set('overview_left', 'tide_dashboard_current_user:empty');
+  $workbench_config->set('overview_right', 'tide_dashboard_current_user:empty');
+  $workbench_config->set('overview_main', 'tide_dashboard_my_content:overview');
+  $workbench_config->save();
 }

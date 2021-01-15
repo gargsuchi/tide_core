@@ -1,4 +1,4 @@
-access admin menu:
-  title: 'Access Admin menu'
-  description: 'Access the Admin (Manage) menu.'
+access workbench menu:
+  title: 'Access Workbench menu'
+  description: 'Access the Workbench menu.'
   restrict access: FALSE

@@ -1,72 +1,32 @@
-tide_dashboard.admin:
-  title: Dashboard
-  route_name: workbench.admin
-  parent: system.admin_config_workflow
-  description: 'Workbench configuration'
-  weight: 0
-
 tide_dashboard.dashboard:
   title: 'Dashboard'
   route_name: workbench.content
-  menu_name: tide_dashboard
-  weight: -50
-tide_dashboard.dashboard.configure:
-  title: Configure
-  route_name: workbench.admin
-  menu_name: tide_dashboard
-  parent: tide_dashboard.dashboard
-  weight: -50
+  menu_name: admin
+  parent: system.admin
+  weight: -90
 tide_dashboard.dashboard.logout:
   title: 'Log out'
   route_name: user.logout
-  menu_name: tide_dashboard
+  menu_name: admin
   parent: tide_dashboard.dashboard
-  weight: -40
-
-tide_dashboard.node:
-  title: '+ New Page'
-  route_name: system.admin_content
-  weight: -40
-  menu_name: tide_dashboard
-tide_dashboard.node.add:
-  title: 'Add content'
-  route_name: node.add_page
   weight: -50
-  parent: tide_dashboard.node
-  menu_name: tide_dashboard
-tide_dashboard.node.schedule_transition:
-  title: 'Scheduled updates'
-  route_name: entity.scheduled_transition.collection
+
+tide_dashboard.node.add:
+  title: '+ New Page'
+  route_name: node.add_page
   weight: -40
-  parent: tide_dashboard.node
-  menu_name: tide_dashboard
+  parent: system.admin
+  menu_name: admin
 
 tide_dashboard.media:
   title: 'Media'
   route_name: entity.media.collection
   weight: -30
-  menu_name: tide_dashboard
+  menu_name: admin
+  parent: system.admin
 tide_dashboard.media.add:
   title: 'Add media'
   route_name: entity.media.add_page
   weight: -50
   parent: tide_dashboard.media
-  menu_name: tide_dashboard
-
-tide_dashboard.structure:
-  title: 'Structure'
-  route_name: system.admin_structure
-  weight: -20
-  menu_name: tide_dashboard
-
-tide_dashboard.configuration:
-  title: 'Configuration'
-  route_name: system.admin_config
-  weight: -10
-  menu_name: tide_dashboard
-
-tide_dashboard.people:
-  title: 'People'
-  route_name: entity.user.collection
-  weight: 0
-  menu_name: tide_dashboard
+  menu_name: admin

@@ -5,90 +5,30 @@
  * Tide Dashboard.
  */
 
-use Drupal\Core\Menu\MenuTreeParameters;
-
 /**
  * Implements hook_toolbar_alter().
  *
- * Replace the Workbench preRender to use Tide Dashboard menu.
+ * Hide Workbench menu from users without the custom permission.
  *
  * @see workbench_toolbar()
  */
 function tide_dashboard_toolbar_alter(&$items) {
+  $items['administration']['#attached']['library'][] = 'tide_dashboard/toolbar.icons';
   $user = \Drupal::currentUser();
-  if (!$user->hasPermission('access workbench')) {
-    return;
+  if (!$user->hasPermission('access workbench menu')) {
+    unset($items['workbench']);
   }
-
-  $items['workbench']['tab']['#title'] = t('Dashboard');
-  $items['workbench']['tray']['#heading'] = t('Dashboard');
-  $items['workbench']['tray']['workbench_toolbar']['#pre_render'] = ['tide_dashboard_prerender_workbench_toolbar_tray'];
-  $items['workbench']['#attached']['library'][] = 'admin_toolbar/toolbar.tree';
-
-  if (!$user->hasPermission('access admin menu')) {
-    unset($items['administration']);
-  }
-}
-
-/**
- * Renders the toolbar's workbench tray.
- *
- * This is a clone of WorkbenchToolbar::preRenderTray() function, which uses
- * setMaxDepth(4) instead of setMaxDepth(1) to render the Tide Dashboard menu.
- *
- * @param array $element
- *   A renderable array.
- *
- * @return array
- *   The updated renderable array.
- *
- * @see WorkbenchToolbar::preRenderTray()
- * @see toolbar_prerender_toolbar_administration_tray()
- */
-function tide_dashboard_prerender_workbench_toolbar_tray(array $element) : array {
-  $menu_tree = \Drupal::service('toolbar.menu_tree');
-  $parameters = new MenuTreeParameters();
-  $parameters->setMinDepth(1)->setMaxDepth(4);
-  $tree = $menu_tree->load('tide_dashboard', $parameters);
-  $manipulators = [
-    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-    ['callable' => 'toolbar_menu_navigation_links'],
-  ];
-  $tree = $menu_tree->transform($tree, $manipulators);
-  $element['administration_menu'] = $menu_tree->build($tree);
-
-  // Reuse the Toolbar + Workbench icons.
-  $menu_item_classes = [
-    'tide_dashboard.dashboard' => 'toolbar-icon-workbench-my-edited',
-    'tide_dashboard.node' => 'toolbar-icon-system-admin-content',
-    'tide_dashboard.media' => 'toolbar-icon-system-admin-content',
-    'tide_dashboard.structure' => 'toolbar-icon-system-admin-structure',
-    'tide_dashboard.configuration' => 'toolbar-icon-system-admin-config',
-    'tide_dashboard.people' => 'toolbar-icon-entity-user-collection',
-  ];
-  foreach ($menu_item_classes as $menu_item => $class) {
-    if (!isset($element['administration_menu']['#items'][$menu_item]['url'])) {
-      continue;
-    }
-    /** @var \Drupal\Core\Url $url */
-    $url = $element['administration_menu']['#items'][$menu_item]['url'];
-    $attributes = $url->getOption('attributes');
-    $attributes['class'][] = $class;
-    $url->setOption('attributes', $attributes);
-  }
-
-  return $element;
 }
 
 /**
  * Implements hook_menu_links_discovered_alter().
  *
- * Adds node types and media types to the Dashboard menu.
+ * Adds node types and media types to the custom menu items.
  *
  * @see admin_toolbar_tools_menu_links_discovered_alter()
  */
 function tide_dashboard_menu_links_discovered_alter(&$links) {
+  $links['system.admin_content']['weight'] = -50;
   $entity_type_manager = \Drupal::entityTypeManager();
 
   // Add menu item for each content type.
@@ -119,7 +59,6 @@ function tide_dashboard_menu_links_discovered_alter(&$links) {
       'title' => t('Files'),
       'provider' => 'tide_dashboard',
       'route_name' => 'view.files.page_1',
-      'menu_name' => 'tide_dashboard',
       'parent' => 'tide_dashboard.media',
       'weight' => -40,
     ];
