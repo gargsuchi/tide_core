@@ -18,6 +18,7 @@ function tide_dashboard_install($is_syncing) {
   ];
 
   $login_redirect_config = \Drupal::configFactory()->getEditable('login_redirect_per_role.settings');
+  $login_redirect = $login_redirect_config->get('login');
 
   foreach ($role_permissions as $role_id => $permissions) {
     /** @var \Drupal\user\RoleInterface $role */
@@ -28,11 +29,12 @@ function tide_dashboard_install($is_syncing) {
       }
       $role->save();
 
-      $login_redirect_config['login'][$role_id]['redirect_url'] = '/admin/workbench';
-      $login_redirect_config['login'][$role_id]['allow_destination'] = FALSE;
+      $login_redirect[$role_id]['redirect_url'] = '/admin/workbench';
+      $login_redirect[$role_id]['allow_destination'] = FALSE;
     }
   }
 
+  $login_redirect_config->set('login', $login_redirect);
   $login_redirect_config->save();
 
   $workbench_config = \Drupal::configFactory()->getEditable('workbench.settings');
