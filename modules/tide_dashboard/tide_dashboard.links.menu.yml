@@ -14,14 +14,14 @@ tide_dashboard.dashboard.logout:
 tide_dashboard.node.add:
   title: '+ New Page'
   route_name: node.add_page
-  weight: -40
+  weight: -80
   parent: system.admin
   menu_name: admin
 
 tide_dashboard.media:
   title: 'Media'
   route_name: entity.media.collection
-  weight: -30
+  weight: -70
   menu_name: admin
   parent: system.admin
 tide_dashboard.media.add:

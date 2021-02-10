@@ -28,7 +28,6 @@ function tide_dashboard_toolbar_alter(&$items) {
  * @see admin_toolbar_tools_menu_links_discovered_alter()
  */
 function tide_dashboard_menu_links_discovered_alter(&$links) {
-  $links['system.admin_content']['weight'] = -50;
   $entity_type_manager = \Drupal::entityTypeManager();
 
   // Add menu item for each content type.
