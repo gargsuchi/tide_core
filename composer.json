@@ -90,7 +90,7 @@
                 "Unable to install if media is not yet installed - https://www.drupal.org/project/media_entity_audio/issues/2984336": "https://www.drupal.org/files/issues/2018-07-07/requirements-not-met-if-no-media-2984336-4.patch"
             },
             "drupal/metatag": {
-                "Support json api - https://www.drupal.org/project/metatag/issues/2945817": "https://www.drupal.org/files/issues/2019-01-18/computed_field_2945817_61.patch"
+                "Support json api - https://www.drupal.org/project/metatag/issues/2945817": "https://www.drupal.org/files/issues/2020-10-12/2945817-103.patch"
             },
             "drupal/token": {
                 "Summary token not fully handled in fields": "https://www.drupal.org/files/issues/tokens.body-with-summary.patch"
