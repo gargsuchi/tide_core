@@ -75,6 +75,7 @@
     "extra": {
         "patches": {
             "drupal/core": {
+                "Contextual links should not be added inside another link - https://www.drupal.org/node/2898875": "https://www.drupal.org/files/issues/2018-03-16/contextual_links_should-2898875-6.patch",
                 "Custom blocks are no longer displayed and no longer appear in the custom block library - https://www.drupal.org/project/drupal/issues/2997898#comment-12832813": "https://www.drupal.org/files/issues/2018-10-27/2997898-21.patch",
                 "Make the DateTime input format and descriptive text consistent - https://www.drupal.org/project/drupal/issues/2791693#comment-13024583": "https://www.drupal.org/files/issues/2019-03-16/2791693-38.patch",
                 "Content types are ordered by machine name on node/add - https://www.drupal.org/project/drupal/issues/2693485": "https://www.drupal.org/files/issues/2020-06-11/core--content-types-sorting--2693485-82.patch",
