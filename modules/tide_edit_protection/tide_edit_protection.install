@@ -29,8 +29,6 @@ function tide_edit_protection_install() {
   $contentLockSettings = \Drupal::configFactory()
     ->getEditable('content_lock.settings');
   $types = $contentLockSettings->get('types');
-  if (isset($types['node'])) {
-    $types['node']['*'] = '*';
-  }
+  $types['node'] = ['*' => '*'];
   $contentLockSettings->set('types', $types)->save();
 }
