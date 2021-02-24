@@ -13,9 +13,7 @@ dependencies:
     - content_lock
     - node
     - user
-_core:
-  default_config_hash: QvXv3a6WUyv4-xW6nELYHAg41Li9IxbbExB5j6Tkd4Y
-id: locked_content
+id: tide_locked_content
 label: 'Locked content'
 module: views
 description: ''
