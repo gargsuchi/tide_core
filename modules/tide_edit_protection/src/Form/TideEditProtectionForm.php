@@ -96,7 +96,7 @@ class TideEditProtectionForm extends ConfigFormBase {
       '#title' => $this->t('Method'),
       '#default_value' => $config->get('entity_method'),
       '#options' => $entity_methods,
-      '#description' => $this->t('Choose which entity forms will be match for unsaved warning when left form page.'),
+      '#description' => $this->t('Choose which entity forms will be matched for unsaved changes warning when leaving form page.'),
     ];
 
     $form['entity_types'] = [
@@ -129,7 +129,7 @@ class TideEditProtectionForm extends ConfigFormBase {
       '#type' => 'textarea',
       '#title' => $this->t('Other form ids'),
       '#default_value' => $config->get('alert_form_ids'),
-      '#description' => $this->t('Specify forms by using their form id. Enter one form id per line. PHP regex [ tide_.*_form ] is support.'),
+      '#description' => $this->t('Specify forms by using their form id. Enter one form id per line. PHP regex [ tide_.*_form ] is supported.'),
     ];
 
     return parent::buildForm($form, $form_state);
