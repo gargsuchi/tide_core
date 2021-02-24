@@ -15,11 +15,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class TideEditProtectionForm extends ConfigFormBase {
 
   /**
+   * Entity Type Manger.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManager
    */
   protected $entityTypeManger;
 
   /**
+   * Entity Type Bundle.
+   *
    * @var \Drupal\Core\Entity\EntityTypeBundleInfo
    */
   protected $entityTypeBundle;
@@ -128,12 +132,6 @@ class TideEditProtectionForm extends ConfigFormBase {
       '#description' => $this->t('Specify forms by using their form id. Enter one form id per line. PHP regex [ tide_.*_form ] is support.'),
     ];
 
-    $form['alert_message'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Alert message'),
-      '#default_value' => $config->get('alert_message'),
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -147,7 +145,6 @@ class TideEditProtectionForm extends ConfigFormBase {
     $entity_types = array_filter($form_state->getValue('entity_types'));
     $entity_bundles = array_filter($form_state->getValue('entity_bundles'));
     $alert_form_ids = $form_state->getValue('alert_form_ids');
-    $alert_message = $form_state->getValue('alert_message');
 
     if ('entity_type' !== $entity_method) {
       $entity_types = [];
@@ -160,9 +157,9 @@ class TideEditProtectionForm extends ConfigFormBase {
       ->set('entity_types', $entity_types)
       ->set('entity_bundles', $entity_bundles)
       ->set('alert_form_ids', $alert_form_ids)
-      ->set('alert_message', $alert_message)
       ->save();
 
     parent::submitForm($form, $form_state);
   }
+
 }

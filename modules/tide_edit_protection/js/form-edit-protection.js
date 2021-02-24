@@ -50,7 +50,7 @@
         }
         if (edit && !click) {
           click = false;
-          return drupalSettings.tide_edit_protection.message;
+          return (Drupal.t("You will lose all unsaved work."));
         }
       }
     }

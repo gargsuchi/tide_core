@@ -1,5 +1,4 @@
-entity_method: all
-entity_types: {  }
+entity_method: entity_type
+entity_types:
+  node: node
 entity_bundles: {  }
-alert_form_ids: ''
-alert_message: ''

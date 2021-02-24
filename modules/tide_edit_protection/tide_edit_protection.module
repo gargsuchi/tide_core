@@ -1,8 +1,14 @@
 <?php
 
+/**
+ * @file
+ * Contains tide_edit_protection.module.
+ */
+
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -12,7 +18,7 @@ function tide_edit_protection_help($route_name, RouteMatchInterface $route_match
     case 'help.page.tide_edit_protection':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Add alert message to a form.') . '</p>';
+      $output .= '<p>' . t('Protects unsaved change.') . '</p>';
       return $output;
 
     default:
@@ -78,6 +84,46 @@ function tide_edit_protection_form_alter(&$form, FormStateInterface $form_state,
     $cleaned_id = Html::getId($form_id);
     $form['#attached']['library'][] = 'tide_edit_protection/form_edit_protection';
     $form['#attached']['drupalSettings']['tide_edit_protection']['forms'][$cleaned_id] = $cleaned_id;
-    $form['#attached']['drupalSettings']['tide_edit_protection']['message'] = $config->get('alert_message');
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function tide_edit_protection_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::moduleHandler()->moduleExists('tide_site_restriction')) {
+    $form_ids = [
+      'views-exposed-form-tide-locked-content-page-1' => 'uid_current',
+    ];
+    foreach ($form_ids as $form_id => $filter) {
+      if (!empty($form['#id']) && $form['#id'] == $form_id) {
+        if (!empty($form[$filter])) {
+          if (!\Drupal::service('tide_site_restriction.helper')
+            ->canBypassRestriction(\Drupal::currentUser())) {
+            $form[$filter]['#disabled'] = TRUE;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function tide_edit_protection_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  if (\Drupal::moduleHandler()->moduleExists('tide_site_restriction')) {
+    if ($view->id() == 'tide_locked_content' && $display_id == 'page_1') {
+      $site_restriction_helper = \Drupal::service('tide_site_restriction.helper');
+      $user_can_bypass_restriction = $site_restriction_helper->canBypassRestriction(\Drupal::currentUser());
+      $filters = $view->display_handler->getOption('filters');
+      if (!$user_can_bypass_restriction) {
+        if (!empty($filters['uid_current'])) {
+          $filters['uid_current']['value'] = 1;
+          $filters['uid_current']['expose']['required'] = TRUE;
+          $view->display_handler->setOption('filters', $filters);
+        }
+      }
+    }
   }
 }
