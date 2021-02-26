@@ -1041,26 +1041,3 @@ function tide_core_update_8043() {
     $editable_config->save();
   }
 }
-
-/**
- * Creates the Show Intro text field storage.
- */
-function tide_core_update_8044() {
-  $storage = FieldStorageConfig::loadByName('node', 'field_show_introduction_text');
-  if (!$storage) {
-    module_load_include('inc', 'tide_core', 'includes/helpers');
-    $storage = FieldStorageConfig::create([
-      'field_name' => 'field_show_introduction_text',
-      'entity_type' => 'node',
-      'type' => 'boolean',
-      'settings' => [],
-      'cardinality' => 1,
-      'persist_with_no_fields' => TRUE,
-    ]);
-    $uuid = _tide_retrieve_config_uuid($storage->getConfigDependencyName());
-    if ($uuid) {
-      $storage->set('uuid', $uuid);
-    }
-    $storage->save();
-  }
-}
