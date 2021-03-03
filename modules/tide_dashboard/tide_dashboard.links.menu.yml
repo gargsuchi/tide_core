@@ -19,7 +19,7 @@ tide_dashboard.node.add:
   menu_name: admin
 
 tide_dashboard.media:
-  title: 'Media'
+  title: 'Media library'
   route_name: entity.media.collection
   weight: -70
   menu_name: admin

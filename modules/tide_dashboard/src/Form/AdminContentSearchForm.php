@@ -69,7 +69,7 @@ class AdminContentSearchForm extends FormBase {
       '#default_value' => '',
       '#attributes' => [
         'title' => $this->t('Enter the terms you wish to search for.'),
-        'placeholder' => $this->t('Enter search term'),
+        'placeholder' => $this->t('Enter a search term or content title'),
       ],
     ];
 
