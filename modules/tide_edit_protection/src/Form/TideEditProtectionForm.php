@@ -68,8 +68,8 @@ class TideEditProtectionForm extends ConfigFormBase {
     foreach ($_entity_types as $entity_type) {
       $entity_types[$entity_type->id()] = $entity_type->getLabel();
     }
-    $_entity_bundles = $this->entityTypeBundle->getAllBundleInfo();
-    foreach ($_entity_bundles as $entity_type_id => $bundles) {
+    $entity_bundle_info = $this->entityTypeBundle->getAllBundleInfo();
+    foreach ($entity_bundle_info as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle_id => $bundle) {
         $entity_bundles[$entity_type_id . '__' . $bundle_id] = $entity_types[$entity_type_id] . ' - ' . $bundle['label'];
       }
