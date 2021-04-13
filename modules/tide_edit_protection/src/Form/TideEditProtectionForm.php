@@ -64,8 +64,8 @@ class TideEditProtectionForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('tide_edit_protection.form');
     $entity_types = $entity_bundles = [];
-    $_entity_types = $this->entityTypeManger->getDefinitions();
-    foreach ($_entity_types as $entity_type) {
+    $entity_type_definitions = $this->entityTypeManger->getDefinitions();
+    foreach ($entity_type_definitions as $entity_type) {
       $entity_types[$entity_type->id()] = $entity_type->getLabel();
     }
     $entity_bundle_info = $this->entityTypeBundle->getAllBundleInfo();

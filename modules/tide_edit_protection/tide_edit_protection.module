@@ -80,7 +80,7 @@ function tide_edit_protection_form_alter(&$form, FormStateInterface $form_state,
     }
   }
 
-  if (TRUE === $include) {
+  if ($include === TRUE) {
     $cleaned_id = Html::getId($form_id);
     $form['#attached']['library'][] = 'tide_edit_protection/form_edit_protection';
     $form['#attached']['drupalSettings']['tide_edit_protection']['forms'][$cleaned_id] = $cleaned_id;
