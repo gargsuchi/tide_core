@@ -70,6 +70,22 @@
         "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        "package/ckeditor-fakeobjects": {
+            "type": "package",
+            "package": {
+                "name": "ckeditor/fakeobjects",
+                "type": "drupal-library",
+                "version": "4.5.11",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://download.ckeditor.com/fakeobjects/releases/fakeobjects_4.5.11.zip",
+                    "reference": "master"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                }
+            }
         }
     },
     "extra": {
